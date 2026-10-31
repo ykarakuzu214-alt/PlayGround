@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#070b16" />
+<meta name="description" content="Carlos Santana: Super Striker — a retro story-driven soccer RPG inspired by Captain Tsubasa 2." />
+<title>Carlos Santana: Super Striker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070b16'/%3E%3Ccircle cx='16' cy='16' r='10' fill='%23f7f7f2'/%3E%3Cpath d='M16 9l4 3-2 5h-5l-2-5z' fill='%2318202e'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div id="app">
+  <div class="crt" aria-hidden="true"></div>
+
+  <!-- ============ TITLE ============ -->
+  <section id="screen-title" class="screen title-screen">
+    <div class="title-sun" aria-hidden="true"></div>
+    <div class="title-crowd" aria-hidden="true"></div>
+    <div class="title-inner">
+      <p class="eyebrow">A STORY-DRIVEN SOCCER RPG</p>
+      <h1 class="logo">
+        <span class="logo-line1">CARLOS</span>
+        <span class="logo-line2">SANTANA</span>
+        <span class="logo-line3">SUPER STRIKER</span>
+      </h1>
+      <div class="title-hero">
+        <canvas id="title-portrait" width="64" height="72" aria-label="Portrait of Carlos Santana"></canvas>
+      </div>
+      <p class="title-tag">From the streets of São Paulo<br/>to the final of the world.</p>
+      <div class="menu-stack">
+        <button id="btn-new" class="btn btn-primary" type="button">NEW STORY</button>
+        <button id="btn-continue" class="btn" type="button">CONTINUE</button>
+        <button id="btn-how" class="btn btn-ghost" type="button">HOW TO PLAY</button>
+      </div>
+      <p class="title-foot">INSPIRED BY CAPTAIN TSUBASA 2 &middot; FAN GAME</p>
+    </div>
+  </section>
+
+  <!-- ============ MAP ============ -->
+  <section id="screen-map" class="screen map-screen hidden">
+    <header class="page-head">
+      <button id="map-back" class="icon-btn" type="button" aria-label="Back to title">&#8592;</button>
+      <div>
+        <p class="eyebrow">STORY MODE</p>
+        <h2>THE ROAD TO GLORY</h2>
+      </div>
+      <button id="map-sound" class="icon-btn" type="button" aria-label="Toggle sound">&#9835;</button>
+    </header>
+    <div class="map-body">
+      <div class="player-card">
+        <canvas id="map-portrait" width="64" height="72" aria-label="Carlos Santana"></canvas>
+        <div class="player-card-main">
+          <div class="player-name">CARLOS SANTANA <span class="num">#10</span></div>
+          <div class="player-pos">FW &middot; BRAZIL</div>
+          <div id="stat-list" class="stat-list"></div>
+        </div>
+      </div>
+      <div class="chapter-list" id="chapter-list"></div>
+      <p class="map-hint" id="map-hint">Choose the next chapter of Carlos's story.</p>
+    </div>
+    <footer class="map-foot">
+      <button id="btn-reset" class="btn btn-ghost btn-small" type="button">ERASE SAVE</button>
+      <span id="save-note" class="save-note"></span>
+    </footer>
+  </section>
+
+  <!-- ============ STORY ============ -->
+  <section id="screen-story" class="screen story-screen hidden">
+    <div class="story-sky" aria-hidden="true"></div>
+    <div class="story-scene" id="story-scene" aria-hidden="true">
+      <div class="scene-moon"></div>
+      <div class="scene-city"></div>
+      <div class="scene-skyline"></div>
+      <div class="scene-pitch"></div>
+      <div class="scene-glow"></div>
+    </div>
+    <div class="chapter-card hidden" id="chapter-card">
+      <p class="eyebrow" id="chapter-card-eyebrow">CHAPTER 1</p>
+      <h2 id="chapter-card-title">THE BOY FROM VILA NOVA</h2>
+      <p id="chapter-card-place">SÃO PAULO, BRAZIL</p>
+    </div>
+    <button id="story-skip" class="skip-btn" type="button">SKIP &#187;</button>
+    <div class="dialogue-box" id="dialogue-box">
+      <div class="portrait-frame" id="portrait-frame">
+        <canvas id="story-portrait" width="64" height="72" aria-label="Character portrait"></canvas>
+      </div>
+      <div class="dialogue-main">
+        <div class="speaker" id="speaker">CARLOS</div>
+        <p id="dialogue-text"></p>
+        <span class="next-cue" id="next-cue">&#9660;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRAINING ============ -->
+  <section id="screen-training" class="screen training-screen hidden">
+    <div class="page-head compact">
+      <div>
+        <p class="eyebrow">BEFORE THE MATCH</p>
+        <h2>TRAINING</h2>
+      </div>
+    </div>
+    <p class="training-lead" id="training-lead">The streetlights hum. Carlos has one night to sharpen his game.</p>
+    <div class="training-list" id="training-list"></div>
+    <p class="training-note">One drill per chapter. Choose what kind of player Carlos becomes.</p>
+  </section>
+
+  <!-- ============ MATCH ============ -->
+  <section id="screen-match" class="screen match-screen hidden">
+    <header class="hud">
+      <div class="hud-team">
+        <span class="hud-swatch" id="hud-swatch-home"></span>
+        <span id="hud-name-home">SANTOS</span>
+      </div>
+      <div class="hud-score">
+        <div class="scoreline"><span id="score-home">0</span><em>:</em><span id="score-away">0</span></div>
+        <div class="clockline"><span id="clock">0'</span><span id="half-label">1ST HALF</span></div>
+      </div>
+      <div class="hud-team right">
+        <span id="hud-name-away">PORTO</span>
+        <span class="hud-swatch" id="hud-swatch-away"></span>
+      </div>
+      <button id="btn-pause" class="icon-btn pause-btn" type="button" aria-label="Pause">&#10074;&#10074;</button>
+    </header>
+
+    <div class="pitch-wrap" id="pitch-wrap">
+      <canvas id="pitch" width="600" height="760" aria-label="Soccer pitch"></canvas>
+      <div class="banner hidden" id="match-banner"><span id="match-banner-text"></span></div>
+      <div class="goal-flash hidden" id="goal-flash"><span>GOAL!</span></div>
+    </div>
+
+    <div class="match-bar">
+      <div class="stamina-wrap" title="Carlos stamina">
+        <span class="mini-label">CARLOS</span>
+        <div class="stamina-track"><div id="stamina-fill" class="stamina-fill"></div></div>
+      </div>
+      <div class="possession-label" id="possession-label">KICK OFF</div>
+    </div>
+    <div class="log-line" id="match-log">The whistle blows.</div>
+    <div class="command-panel" id="commands"></div>
+
+    <!-- duel meter -->
+    <div class="overlay hidden" id="meter-layer">
+      <div class="duel-card">
+        <p class="duel-kicker" id="meter-kicker">SHOT DUEL</p>
+        <div class="duel-names">
+          <div class="duel-side atk">
+            <span class="duel-role" id="meter-atk-role">SHOOTER</span>
+            <strong id="meter-atk-name">CARLOS</strong>
+            <div class="power-track"><div class="power-fill" id="meter-atk-bar"></div></div>
+            <span class="duel-stat" id="meter-atk-stat">SHOT 12</span>
+          </div>
+          <div class="vs">VS</div>
+          <div class="duel-side def">
+            <span class="duel-role" id="meter-def-role">KEEPER</span>
+            <strong id="meter-def-name">VITOR</strong>
+            <div class="power-track"><div class="power-fill red" id="meter-def-bar"></div></div>
+            <span class="duel-stat" id="meter-def-stat">CATCH 9</span>
+          </div>
+        </div>
+        <div class="meter" id="meter">
+          <div class="meter-zone" id="meter-zone"></div>
+          <div class="meter-marker" id="meter-marker"></div>
+        </div>
+        <p class="meter-hint" id="meter-hint">STOP THE MARKER IN THE GREEN ZONE</p>
+        <p class="meter-result" id="meter-result"></p>
+      </div>
+    </div>
+
+    <!-- special move cut-in -->
+    <div class="overlay cutin hidden" id="cutin-layer">
+      <div class="cutin-stripes"></div>
+      <div class="cutin-body">
+        <canvas id="cutin-portrait" width="64" height="72"></canvas>
+        <div class="cutin-text">
+          <p id="cutin-name">CARLOS SANTANA</p>
+          <h2 id="cutin-move">SANTANA TURN</h2>
+          <span id="cutin-tag">SPECIAL MOVE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- pause -->
+    <div class="overlay hidden" id="pause-layer">
+      <div class="modal">
+        <h2>PAUSED</h2>
+        <button id="btn-resume" class="btn btn-primary" type="button">RESUME</button>
+        <button id="btn-restart" class="btn" type="button">RESTART MATCH</button>
+        <button id="btn-quit" class="btn" type="button">QUIT TO MAP</button>
+        <button id="btn-sound" class="btn btn-ghost" type="button">SOUND: ON</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="screen-result" class="screen result-screen hidden">
+    <div class="result-glow" aria-hidden="true"></div>
+    <p class="eyebrow" id="result-eyebrow">FULL TIME</p>
+    <h2 id="result-title">VICTORY</h2>
+    <div class="result-score" id="result-score"><span id="result-home">0</span><em>:</em><span id="result-away">0</span></div>
+    <div class="result-teams" id="result-teams"><span id="result-team-home">SANTOS</span><span id="result-team-away">PORTO</span></div>
+    <div class="result-body" id="result-body"></div>
+    <div class="menu-stack">
+      <button id="btn-result-main" class="btn btn-primary" type="button">CONTINUE</button>
+      <button id="btn-result-retry" class="btn hidden" type="button">TRY AGAIN</button>
+      <button id="btn-result-map" class="btn btn-ghost" type="button">BACK TO MAP</button>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO PLAY ============ -->
+  <div class="overlay hidden" id="how-layer">
+    <div class="modal how-modal">
+      <h2>HOW TO PLAY</h2>
+      <div class="how-grid">
+        <div>
+          <h3>THE MATCH</h3>
+          <p>Carlos's team attacks upward. When you have the ball, pick <b>DRIBBLE</b>, <b>PASS</b>, <b>SHOOT</b>, a <b>SPECIAL</b> move, or <b>HOLD</b> to catch your breath.</p>
+          <p>When the enemy has the ball, choose a defensive posture: <b>PRESS</b> to fight for it, <b>BLOCK</b> to guard a shot, or <b>FALL BACK</b> to recover stamina.</p>
+        </div>
+        <div>
+          <h3>THE METER</h3>
+          <p>Every duel opens a timing meter. Stop the marker in the green zone to boost your power. A perfect stop can beat a stronger opponent.</p>
+          <p><b>Keyboard:</b> Arrow keys / W A S D to pick, Enter or Space to confirm, Space to stop the meter.<br/><b>Touch:</b> tap the buttons.</p>
+          <p>Shots only work from the attacking half. Specials cost stamina. At half time, both teams recover.</p>
+        </div>
+      </div>
+      <button id="btn-how-close" class="btn btn-primary" type="button">GOT IT</button>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status"></div>
+</div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
