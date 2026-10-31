@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="Carlos Santana: O Camisa 10 — a story-driven pixel football game inspired by classic command-RPG soccer.">
+  <title>Carlos Santana: O Camisa 10</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/press-start-2p.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/vt323.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <noscript><div class="noscript">This game needs JavaScript. Please enable it to play.</div></noscript>
+
+  <div id="app">
+    <div class="stage" id="stage">
+      <canvas id="game" width="640" height="360" aria-label="Carlos Santana football game"></canvas>
+      <div class="crt" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+      <div id="fade" class="fade" aria-hidden="true"></div>
+
+      <!-- ============ TITLE ============ -->
+      <section id="screen-title" class="screen screen-title" aria-label="Title screen">
+        <div class="title-top">
+          <span class="omg-chip">OMG ORIGINAL</span>
+          <span class="title-year">SALVADOR &middot; 1994</span>
+        </div>
+        <div class="title-main">
+          <p class="title-kicker">A FOOTBALL STORY IN THREE CHAPTERS</p>
+          <h1 class="logo" aria-label="Carlos Santana">
+            <span class="logo-first">CARLOS</span>
+            <span class="logo-last">SANTANA</span>
+          </h1>
+          <div class="logo-tag"><span class="tag-line"></span><span class="tag-number">10</span><span class="tag-text">O CAMISA 10</span><span class="tag-line"></span></div>
+          <p class="title-sub">From the sand of Salvador to the world stage.<br>Play the story of the boy who made football dance.</p>
+        </div>
+        <nav class="title-menu" id="title-menu" aria-label="Main menu">
+          <button type="button" class="btn btn-primary" data-menu="new"><span class="btn-key">&#9654;</span> NEW STORY</button>
+          <button type="button" class="btn" data-menu="continue" id="btn-continue" hidden><span class="btn-key">&#9654;</span> CONTINUE</button>
+          <button type="button" class="btn" data-menu="chapters" id="btn-chapters" hidden>CHAPTERS</button>
+          <button type="button" class="btn" data-menu="howto">HOW TO PLAY</button>
+          <button type="button" class="btn" data-menu="sound" id="btn-sound">SOUND: ON</button>
+        </nav>
+        <div class="title-foot">
+          <p>AN UNOFFICIAL FAN TRIBUTE &middot; ORIGINAL PIXEL ART, CODE &amp; CHIPTUNE MUSIC</p>
+          <p class="title-foot-small">Not affiliated with the creators or publishers of Captain Tsubasa.</p>
+        </div>
+      </section>
+
+      <!-- ============ STORY ============ -->
+      <section id="screen-story" class="screen screen-story" aria-label="Story" hidden>
+        <div class="story-top">
+          <div class="chapter-chip" id="story-chapter-chip">CHAPTER 1 &middot; SALT &amp; SAND</div>
+          <div class="story-tools">
+            <button type="button" class="icon-btn" id="story-log" title="Story so far" aria-label="Story log">LOG</button>
+            <button type="button" class="icon-btn" id="story-sound" title="Toggle sound" aria-label="Toggle sound">&#9835;</button>
+            <button type="button" class="icon-btn" id="story-skip" title="Skip cutscene" aria-label="Skip cutscene">SKIP</button>
+          </div>
+        </div>
+        <div class="story-bottom">
+          <div class="speaker-card" id="speaker-card">
+            <canvas id="portrait" width="96" height="96" aria-hidden="true"></canvas>
+            <div class="speaker-meta">
+              <span class="speaker-name" id="speaker-name">CARLOS</span>
+              <span class="speaker-role" id="speaker-role">MIDFIELDER &middot; 11</span>
+            </div>
+          </div>
+          <div class="dialogue-panel" id="dialogue-panel">
+            <p class="dialogue-text" id="dialogue-text"></p>
+            <div class="dialogue-choices" id="dialogue-choices" hidden></div>
+            <div class="dialogue-foot">
+              <span class="dialogue-hint" id="dialogue-hint">CLICK / SPACE TO CONTINUE</span>
+              <span class="advance-cue" id="advance-cue" aria-hidden="true">&#9660;</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HOW TO PLAY ============ -->
+      <section id="screen-howto" class="screen screen-sheet" aria-label="How to play" hidden>
+        <div class="sheet">
+          <header class="sheet-head">
+            <p class="eyebrow">O CAMISA 10</p>
+            <h2>HOW TO PLAY</h2>
+            <button type="button" class="icon-btn sheet-close" data-close="howto" aria-label="Close">&#10005;</button>
+          </header>
+          <div class="howto-grid">
+            <article class="howto-card">
+              <h3>THE STORY</h3>
+              <p>Follow Carlos Santana through three chapters. Talk, choose what kind of player he becomes, train, then win the match to move on.</p>
+              <p class="muted">Progress saves automatically after every chapter.</p>
+            </article>
+            <article class="howto-card">
+              <h3>ON THE PITCH</h3>
+              <p>You always control Carlos, marked with a gold ring. Move, chase, pass, and shoot. Teammates and opponents play on their own.</p>
+              <ul class="key-list">
+                <li><span class="key">WASD</span><span class="key">ARROWS</span> move</li>
+                <li><span class="key">SPACE</span> hold to charge, release to shoot</li>
+                <li><span class="key">K</span> pass &middot; tackle when defending</li>
+                <li><span class="key">L</span> special moves menu</li>
+                <li><span class="key">ESC</span> pause</li>
+              </ul>
+            </article>
+            <article class="howto-card">
+              <h3>1v1 DUELS</h3>
+              <p>When a defender steps up, the game freezes for a command duel. Pick <b>DRIBBLE</b>, <b>PASS</b>, <b>SHOOT</b> or <b>SPECIAL</b>, then stop the sweeping needle in the golden zone.</p>
+              <p class="muted">Timing adds up to +30 to Carlos's stat roll. Specials cost Samba energy.</p>
+            </article>
+            <article class="howto-card">
+              <h3>SAMBA ENERGY</h3>
+              <p>Dribble wins, passes, tackles and goals fill the bar. Spend it on:</p>
+              <ul class="move-list">
+                <li><b>SAMBA STEP</b><span>20</span> — leave a defender behind</li>
+                <li><b>GOLDEN COMBI</b><span>35</span> — one-two into space</li>
+                <li><b>SANTANA ROTATION</b><span>55</span> — a spinning wonder shot</li>
+              </ul>
+            </article>
+            <article class="howto-card">
+              <h3>TOUCH &amp; TABLET</h3>
+              <p>Use the virtual stick and the SHOOT, PASS and SPECIAL buttons. Tap dialogue to continue. On a phone, landscape gives you the biggest pitch.</p>
+              <p class="muted">The game works in portrait too. Turn the phone for widescreen.</p>
+            </article>
+            <article class="howto-card">
+              <h3>WANT TO WIN?</h3>
+              <p>Shoot with the sweet spot: charge until the ring turns gold, aim with up/down, and release. Low shots into the corners beat most keepers.</p>
+              <p class="muted">A draw goes to golden goal, then penalties. The story waits for a win.</p>
+            </article>
+          </div>
+          <footer class="sheet-foot">
+            <button type="button" class="btn btn-primary" data-close="howto">BACK</button>
+          </footer>
+        </div>
+      </section>
+
+      <!-- ============ CHAPTERS ============ -->
+      <section id="screen-chapters" class="screen screen-sheet" aria-label="Chapter select" hidden>
+        <div class="sheet sheet-narrow">
+          <header class="sheet-head">
+            <p class="eyebrow">STORY MODE</p>
+            <h2>CHAPTERS</h2>
+            <button type="button" class="icon-btn sheet-close" data-close="chapters" aria-label="Close">&#10005;</button>
+          </header>
+          <div class="chapter-list" id="chapter-list"></div>
+          <footer class="sheet-foot">
+            <button type="button" class="btn" data-close="chapters">BACK</button>
+          </footer>
+        </div>
+      </section>
+
+      <!-- ============ PRE-MATCH ============ -->
+      <section id="screen-prematch" class="screen screen-sheet" aria-label="Pre-match" hidden>
+        <div class="sheet prematch">
+          <header class="prematch-head">
+            <div>
+              <p class="eyebrow" id="prematch-competition">BEACH CUP &middot; FINAL</p>
+              <h2 id="prematch-title">BARRA DO SOL <span>VS</span> FALCÕES</h2>
+            </div>
+            <button type="button" class="icon-btn" id="prematch-title-btn" title="Return to title" aria-label="Return to title">&#10005;</button>
+          </header>
+          <div class="prematch-body">
+            <div class="prematch-teams">
+              <div class="team-panel home" id="prematch-home"></div>
+              <div class="versus"><span>VS</span><small id="prematch-venue">PRAIA DO FAROL &middot; 17:40</small></div>
+              <div class="team-panel away" id="prematch-away"></div>
+            </div>
+            <div class="prematch-info">
+              <div class="info-card">
+                <h3>THE BRIEF</h3>
+                <p id="prematch-brief"></p>
+              </div>
+              <div class="info-card">
+                <h3>CARLOS'S FORM</h3>
+                <div class="stat-bars" id="prematch-stats"></div>
+                <p class="training-note" id="prematch-bonus"></p>
+              </div>
+              <div class="info-card">
+                <h3>DANGER MAN</h3>
+                <p id="prematch-danger"></p>
+              </div>
+            </div>
+          </div>
+          <footer class="prematch-foot">
+            <button type="button" class="btn" id="prematch-back">BACK</button>
+            <button type="button" class="btn btn-primary btn-kick" id="prematch-kick">KICK OFF &#9654;</button>
+          </footer>
+        </div>
+      </section>
+
+      <!-- ============ TRAINING ============ -->
+      <section id="screen-training" class="screen screen-training" aria-label="Training" hidden>
+        <div class="training-top">
+          <span class="chapter-chip" id="training-chip">TRAINING &middot; SAND KEEPY-UPPY</span>
+          <button type="button" class="icon-btn" id="training-skip">SKIP</button>
+        </div>
+        <div class="training-panel">
+          <div class="training-copy">
+            <p class="eyebrow" id="training-eyebrow">TOUCH &amp; RHYTHM</p>
+            <h2 id="training-title">SAND KEEPY-UPPY</h2>
+            <p id="training-text">Tap the ball as the needle crosses the sand-gold zone. Eight touches. Every two clean touches adds a match bonus.</p>
+          </div>
+          <div class="training-score">
+            <div class="training-count"><span id="training-made">0</span><small>/ 8</small></div>
+            <div class="training-combo" id="training-combo">COMBO x0</div>
+          </div>
+        </div>
+        <div class="training-meter-wrap">
+          <div class="training-meter" id="training-meter">
+            <div class="training-target" id="training-target"></div>
+            <div class="training-needle" id="training-needle"></div>
+          </div>
+          <div class="training-actions">
+            <button type="button" class="btn btn-primary btn-hit" id="training-hit">TAP!</button>
+            <span class="training-hint">SPACE / TAP THE PITCH</span>
+          </div>
+        </div>
+        <div class="training-toast" id="training-toast" aria-live="polite"></div>
+      </section>
+
+      <!-- ============ MATCH ============ -->
+      <section id="screen-match" class="screen screen-match" aria-label="Match" hidden>
+        <div id="match-hud" class="match-hud">
+          <div class="scoreboard">
+            <div class="sb-team sb-home" id="sb-home"><span class="sb-dot"></span><span class="sb-name">BARRA</span></div>
+            <div class="sb-score" id="sb-score">0 <i>:</i> 0</div>
+            <div class="sb-team sb-away" id="sb-away"><span class="sb-name">FALCÕES</span><span class="sb-dot"></span></div>
+            <div class="sb-clock" id="sb-clock">00:00</div>
+            <div class="sb-half" id="sb-half">1ST HALF</div>
+          </div>
+          <div class="match-tools">
+            <button type="button" class="icon-btn" id="match-sound" aria-label="Toggle sound">&#9835;</button>
+            <button type="button" class="icon-btn" id="match-pause" aria-label="Pause">II</button>
+          </div>
+          <div class="commentary" id="commentary" aria-live="polite"></div>
+          <div class="tension-wrap" id="tension-wrap">
+            <div class="tension-label"><span>SAMBA</span><b id="tension-value">0</b></div>
+            <div class="tension-bar"><div class="tension-fill" id="tension-fill"></div><div class="tension-shine"></div></div>
+          </div>
+          <div class="match-controls-hint" id="match-controls-hint">
+            <span><b>WASD</b> MOVE</span><span><b>SPACE</b> SHOOT</span><span><b>K</b> PASS/TACKLE</span><span><b>L</b> SPECIAL</span>
+          </div>
+          <div class="goal-banner" id="goal-banner" aria-hidden="true">
+            <span class="goal-word">GOOOOL!</span>
+            <span class="goal-sub" id="goal-sub">CARLOS SANTANA</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULT ============ -->
+      <section id="screen-result" class="screen screen-sheet" aria-label="Match result" hidden>
+        <div class="sheet result-sheet">
+          <p class="eyebrow" id="result-eyebrow">FULL TIME</p>
+          <h2 id="result-title">VICTORY</h2>
+          <div class="result-score" id="result-score">3 <span>&ndash;</span> 1</div>
+          <p class="result-venue" id="result-venue">PRAIA DO FAROL</p>
+          <div class="result-stats" id="result-stats"></div>
+          <p class="result-quote" id="result-quote"></p>
+          <div class="result-actions">
+            <button type="button" class="btn" id="result-retry" hidden>RETRY MATCH</button>
+            <button type="button" class="btn" id="result-title" hidden>RETURN TO TITLE</button>
+            <button type="button" class="btn btn-primary" id="result-continue">CONTINUE STORY &#9654;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CHAPTER COMPLETE ============ -->
+      <section id="screen-progress" class="screen screen-sheet" aria-label="Chapter complete" hidden>
+        <div class="sheet progress-sheet">
+          <p class="eyebrow" id="progress-eyebrow">CHAPTER COMPLETE</p>
+          <h2 id="progress-title">SALT &amp; SAND</h2>
+          <div class="progress-medal" id="progress-medal">10</div>
+          <p class="progress-copy" id="progress-copy"></p>
+          <div class="progress-stats" id="progress-stats"></div>
+          <button type="button" class="btn btn-primary" id="progress-next">NEXT CHAPTER &#9654;</button>
+        </div>
+      </section>
+
+      <!-- ============ CREDITS ============ -->
+      <section id="screen-credits" class="screen screen-credits" aria-label="Credits" hidden>
+        <div class="credits-scroll" id="credits-scroll">
+          <div class="credits-inner">
+            <p class="credits-kicker">OBRIGADO POR JOGAR</p>
+            <h2>CARLOS SANTANA<br><span>O CAMISA 10</span></h2>
+            <div class="credits-block">
+              <h3>A STORY OF</h3>
+              <p>Joy, roots, and the courage to play your own rhythm.</p>
+            </div>
+            <div class="credits-block">
+              <h3>DESIGN &amp; CODE</h3>
+              <p>Built for the browser with HTML canvas, vanilla JavaScript and WebAudio.</p>
+            </div>
+            <div class="credits-block">
+              <h3>ART &amp; ANIMATION</h3>
+              <p>Every pixel is drawn procedurally at runtime.</p>
+            </div>
+            <div class="credits-block">
+              <h3>MUSIC</h3>
+              <p>Procedural chiptune samba, synthesized live.</p>
+            </div>
+            <div class="credits-block">
+              <h3>SPECIAL THANKS</h3>
+              <p>To every kid who ever played barefoot.</p>
+            </div>
+            <p class="credits-disclaimer">An unofficial, non-commercial fan tribute. Not affiliated with the creators or publishers of Captain Tsubasa. All art, code and music here are original.</p>
+            <button type="button" class="btn btn-primary" id="credits-done">BACK TO TITLE</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DUEL OVERLAY ============ -->
+      <div id="duel" class="duel" role="dialog" aria-modal="true" aria-label="One on one duel" hidden>
+        <div class="duel-frame">
+          <div class="duel-head">
+            <span class="duel-tag">1 v 1</span>
+            <span class="duel-title" id="duel-title">TAKE HIM ON</span>
+            <span class="duel-tag" id="duel-context">MATCHUP</span>
+          </div>
+          <div class="duel-cards">
+            <div class="duel-card atk">
+              <canvas id="duel-portrait-a" width="96" height="96"></canvas>
+              <div class="duel-meta"><b id="duel-name-a">CARLOS</b><small id="duel-role-a">TECH 72</small></div>
+              <div class="duel-bar"><i id="duel-bar-a"></i></div>
+            </div>
+            <div class="duel-vs">VS</div>
+            <div class="duel-card def">
+              <canvas id="duel-portrait-b" width="96" height="96"></canvas>
+              <div class="duel-meta"><b id="duel-name-b">RATINHO</b><small id="duel-role-b">TECH 44</small></div>
+              <div class="duel-bar"><i id="duel-bar-b"></i></div>
+            </div>
+          </div>
+          <div class="duel-commands" id="duel-commands">
+            <button type="button" class="duel-cmd" data-cmd="dribble"><span class="cmd-key">1</span><b>DRIBBLE</b><small>Technique</small></button>
+            <button type="button" class="duel-cmd" data-cmd="pass"><span class="cmd-key">2</span><b>PASS</b><small>Find a friend</small></button>
+            <button type="button" class="duel-cmd" data-cmd="shoot"><span class="cmd-key">3</span><b>SHOOT</b><small>Go for goal</small></button>
+            <button type="button" class="duel-cmd special" data-cmd="special"><span class="cmd-key">4</span><b>SPECIAL</b><small>Samba energy</small></button>
+          </div>
+          <div class="duel-meter-wrap" id="duel-meter-wrap" hidden>
+            <div class="duel-meter-labels"><span>RUSHED</span><span>PERFECT</span><span>RUSHED</span></div>
+            <div class="duel-meter" id="duel-meter">
+              <div class="duel-zone perfect"></div>
+              <div class="duel-zone good"></div>
+              <div class="duel-needle" id="duel-needle"></div>
+            </div>
+            <p class="duel-meter-hint" id="duel-meter-hint">PRESS SPACE / TAP TO LOCK</p>
+          </div>
+          <div class="duel-outcome" id="duel-outcome" hidden></div>
+        </div>
+      </div>
+
+      <!-- ============ SPECIAL MENU ============ -->
+      <div id="special-menu" class="special-menu" role="dialog" aria-modal="true" aria-label="Special moves" hidden>
+        <div class="special-head">
+          <span class="eyebrow">SAMBA ENERGY <b id="special-energy">0</b></span>
+          <h2>CHOOSE YOUR RHYTHM</h2>
+          <button type="button" class="icon-btn" id="special-close" aria-label="Close">&#10005;</button>
+        </div>
+        <div class="special-cards" id="special-cards"></div>
+        <p class="special-foot">PRESS 1 &middot; 2 &middot; 3 OR CLICK &middot; ESC TO CLOSE</p>
+      </div>
+
+      <!-- ============ PAUSE ============ -->
+      <div id="pause" class="pause" role="dialog" aria-modal="true" aria-label="Pause menu" hidden>
+        <div class="pause-card">
+          <p class="eyebrow">MATCH PAUSED</p>
+          <h2 id="pause-title">PRAIA DO FAROL</h2>
+          <div class="pause-stats" id="pause-stats"></div>
+          <div class="pause-actions">
+            <button type="button" class="btn btn-primary" id="pause-resume">RESUME</button>
+            <button type="button" class="btn" id="pause-restart">RESTART MATCH</button>
+            <button type="button" class="btn" id="pause-quit">QUIT TO TITLE</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PENALTY SHOOTOUT ============ -->
+      <div id="penalty" class="penalty" role="dialog" aria-modal="true" aria-label="Penalty shootout" hidden>
+        <div class="penalty-card">
+          <p class="eyebrow">GOLDEN GOAL COULD NOT SEPARATE THEM</p>
+          <h2>PENALTY SHOOTOUT</h2>
+          <div class="penalty-score" id="penalty-score">0 <span>&ndash;</span> 0</div>
+          <p class="penalty-round" id="penalty-round">ROUND 1 &middot; BRASIL</p>
+          <div class="penalty-goal" id="penalty-goal">
+            <div class="penalty-net"></div>
+            <div class="penalty-ball" id="penalty-ball"></div>
+            <div class="penalty-keeper" id="penalty-keeper"></div>
+          </div>
+          <p class="penalty-prompt" id="penalty-prompt">PICK YOUR CORNER</p>
+          <div class="penalty-choices" id="penalty-choices">
+            <button type="button" class="btn" data-penalty="left">LEFT</button>
+            <button type="button" class="btn" data-penalty="center">CENTER</button>
+            <button type="button" class="btn" data-penalty="right">RIGHT</button>
+          </div>
+          <p class="penalty-hint" id="penalty-hint">THE STORY NEEDS A WINNER</p>
+        </div>
+      </div>
+
+      <!-- ============ TOASTS / BANNERS ============ -->
+      <div class="toast-layer" id="toast-layer" aria-live="polite"></div>
+      <div class="banner" id="banner" aria-live="polite" hidden>
+        <span class="banner-kicker" id="banner-kicker">SPECIAL MOVE</span>
+        <span class="banner-title" id="banner-title">SANTANA ROTATION</span>
+        <span class="banner-sub" id="banner-sub">CARLOS SANTANA</span>
+      </div>
+
+      <!-- ============ TOUCH ============ -->
+      <div class="touch-layer" id="touch-layer" aria-hidden="false">
+        <div class="joystick" id="joystick"><div class="joystick-ring"></div><div class="joystick-stick" id="joystick-stick"></div></div>
+        <div class="touch-actions">
+          <button type="button" class="tbtn tbtn-pass" data-touch="pass"><span>K</span>PASS</button>
+          <button type="button" class="tbtn tbtn-shoot" data-touch="shoot"><span>SPACE</span>SHOOT</button>
+          <button type="button" class="tbtn tbtn-special" data-touch="special"><span>L</span>SPECIAL</button>
+        </div>
+      </div>
+
+      <div class="rotate-note" id="rotate-note" hidden>
+        <span>ROTATE YOUR PHONE FOR THE FULL PITCH</span>
+        <button type="button" class="icon-btn" id="rotate-close">&#10005;</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
